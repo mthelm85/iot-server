@@ -33,6 +33,10 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('updateWeight')
   })
 
+  socket.on('tare', () => {
+    socket.broadcast.emit('tare')
+  })
+
   socket.on('disconnect', () => {
     console.log('User disconnected...')
   })
