@@ -29,10 +29,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('weightUpdate', data)
   })
 
-  socket.on('getWeight', () => {
-    socket.broadcast.emit('updateWeight')
-  })
-
   socket.on('tare', () => {
     socket.broadcast.emit('tare')
   })
