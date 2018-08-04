@@ -35,8 +35,8 @@ io.on('connection', (socket) => {
   })
 
   // when user sends tare request, emit to the scale
-  socket.on('tare', () => {
-    socket.broadcast.emit('tare')
+  socket.on('tare', (roomId) => {
+    socket.to(roomId).emit('tare')
   })
 
   // handle user disconnections
