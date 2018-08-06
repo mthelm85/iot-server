@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser'),
       cookieParser = require('cookie-parser'),
+      cors = require('cors'),
       express = require('express'),
       http = require('http'),
       mongoose = require('mongoose'),
@@ -26,6 +27,11 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 app.use(bodyParser.json())
+app.use(cors({
+  origin:['http://localhost:8080'],
+  methods:['GET','POST'],
+  credentials: true
+}))
 app.use(cookieParser())
 app.use(passport.initialize())
 app.use(passport.session())
