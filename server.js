@@ -18,37 +18,37 @@ const app = express(),
 
 const io = require('socket.io')(server)
 
+// Connect to MongoDB
+mongoose.connect(configDB.url, { useNewUrlParser: true })
+
 // Include socket //
 require('./socket.js')(io)
 
 // Server Config//
 app.use(morgan('dev'))
-app.use(bodyParser.urlencoded({
-  extended: false
-}))
-app.use(bodyParser.json())
+app.use(cookieParser())
 app.use(cors({
   origin:['http://localhost:8080'],
   methods:['GET','POST'],
   credentials: true
 }))
-app.use(cookieParser())
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
+app.use(bodyParser.json())
 app.use(session({
   secret: secret.secret,
   resave: false,
   saveUninitialized: false
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Include passport
 require('./config/passport')(passport, User)
 
 // Include routes
-require('./routes/routes.js')(app, passport)
-
-// Connect to MongoDB
-mongoose.connect(configDB.url, { useNewUrlParser: true })
+require('./routes/routes.js')(app, passport, User)
 
 
 server.listen(port)

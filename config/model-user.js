@@ -19,7 +19,17 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
-  }
+  },
+  kegs: [{
+    name: {
+      type: String,
+      default: 'name'
+    },
+    id: {
+      type: String,
+      default: 'id'
+    }
+  }]
 })
 
 userSchema.methods.generateHash = (password) => {
