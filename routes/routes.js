@@ -29,4 +29,17 @@ module.exports = (app, passport, User) => {
     })
   })
 
+  app.get('/get-kegs', isLoggedIn, (req, res) => {
+    let query = { email: req.query.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        res.send(user.kegs)
+      } else if (!user) {
+        console.log('No user found...')
+      }
+    })
+  })
+
 }
