@@ -13,10 +13,11 @@ module.exports = (app, passport, User) => {
   })
 
   app.post('/login', passport.authenticate('local-login', {}), (req, res) => {
-  res.json({ success: 'yes' })
+  res.json({ success: 'yes', userEmail: req.user.email, userKegs: req.user.kegs })
 })
 
   app.post('/register', isLoggedIn, (req, res) => {
+    console.log(req.body)
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -29,17 +30,9 @@ module.exports = (app, passport, User) => {
     })
   })
 
-  app.get('/get-kegs', isLoggedIn, (req, res) => {
-    let query = { email: req.query.email }
-    User.findOne(query, (err, user) => {
-      if (err) {
-        res.json({ message: 'Error' })
-      } else if (user) {
-        res.send(user.kegs)
-      } else if (!user) {
-        console.log('No user found...')
-      }
-    })
+  app.get('/logout', isLoggedIn, (req, res) => {
+    req.logout()
+    res.json({ success: 'yes' })
   })
 
 }
