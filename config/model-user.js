@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
     id: {
       type: String,
       default: 'id'
+    },
+    color: {
+      type: Number,
+      default: 0
     }
   }]
 })

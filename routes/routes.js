@@ -35,4 +35,16 @@ module.exports = (app, passport, User) => {
     res.json({ success: 'yes' })
   })
 
+  app.get('/get-kegs', isLoggedIn, (req, res) => {
+    let query = { email: req.query.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        console.log(user)
+        res.json({ userKegs: user.kegs })
+      }
+    })
+  })
+
 }
