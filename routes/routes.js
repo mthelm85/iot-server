@@ -59,4 +59,17 @@ module.exports = (app, passport, User) => {
     })
   })
 
+  app.patch('/change-name', isLoggedIn, (req, res) => {
+    let query = { email: req.body.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        user.kegs[req.body.keg].name = req.body.name
+        user.save()
+        res.json({ message: 'Name changed' })
+      }
+    })
+  })
+
 }
