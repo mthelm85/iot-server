@@ -16,7 +16,7 @@ module.exports = (app, passport, User) => {
   res.json({ success: 'yes', userEmail: req.user.email, userKegs: req.user.kegs })
 })
 
-  app.post('/register', isLoggedIn, (req, res) => {
+  app.patch('/register', isLoggedIn, (req, res) => {
     console.log(req.body)
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
@@ -41,8 +41,20 @@ module.exports = (app, passport, User) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
-        console.log(user)
         res.json({ userKegs: user.kegs })
+      }
+    })
+  })
+
+  app.patch('/change-color', isLoggedIn, (req, res) => {
+    let query = { email: req.body.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        user.kegs[req.body.keg].color = req.body.color
+        user.save()
+        res.json({ message: 'Color changed' })
       }
     })
   })

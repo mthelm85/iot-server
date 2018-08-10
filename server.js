@@ -29,7 +29,7 @@ app.use(morgan('dev'))
 app.use(cookieParser())
 app.use(cors({
   origin:['http://localhost:8080'],
-  methods:['GET','POST'],
+  methods:['GET','POST', 'PATCH'],
   credentials: true
 }))
 app.use(bodyParser.urlencoded({
