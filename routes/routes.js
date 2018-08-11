@@ -84,4 +84,36 @@ module.exports = (app, passport, User) => {
     })
   })
 
+  // Set tareWeight
+  app.patch('/set-tare-weight', isLoggedIn, (req, res) => {
+    let query = { email: req.body.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        user.kegs[req.body.keg].tareWeight = req.body.tareWeight
+        user.save()
+        res.json({ message: 'tareWeight set' })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
+      }
+    })
+  })
+
+  // Set fullWeight
+  app.patch('/set-full-weight', isLoggedIn, (req, res) => {
+    let query = { email: req.body.email }
+    User.findOne(query, (err, user) => {
+      if (err) {
+        res.json({ message: 'Error' })
+      } else if (user) {
+        user.kegs[req.body.keg].fullWeight = req.body.fullWeight
+        user.save()
+        res.json({ message: 'fullWeight set' })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
+      }
+    })
+  })
+
 }
