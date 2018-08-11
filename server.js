@@ -10,6 +10,7 @@ const bodyParser = require('body-parser'),
 
 const app = express(),
       configDB = require('./config/dbUrl'),
+      MongoDBStore = require('connect-mongodb-session')(session),
       socketIO = require('socket.io'),
       secret = require('./config/secret'),
       server = http.createServer(app),
@@ -18,8 +19,21 @@ const app = express(),
 
 const io = require('socket.io')(server)
 
-// Connect to MongoDB
+// Connect to/configure MongoDB
 mongoose.connect(configDB.url, { useNewUrlParser: true })
+const store = new MongoDBStore({
+  uri: configDB.url,
+  collection: 'sessions'
+})
+
+store.on('connected', () => {
+  store.client
+})
+
+store.on('error', (err) => {
+  assert.ifError(err)
+  assert.ok(false)
+})
 
 // Include socket //
 require('./socket.js')(io)
@@ -39,7 +53,8 @@ app.use(bodyParser.json())
 app.use(session({
   secret: secret.secret,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: store
 }))
 app.use(passport.initialize())
 app.use(passport.session())
