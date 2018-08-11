@@ -32,6 +32,12 @@ const userSchema = mongoose.Schema({
     color: {
       type: Number,
       default: 0
+    },
+    tareWeight: {
+      type: Number
+    },
+    fullWeight: {
+      type: Number
     }
   }]
 })

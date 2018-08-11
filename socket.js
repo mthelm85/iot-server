@@ -11,7 +11,7 @@ module.exports = (io) => {
 
     // when scale sends weight and roomId, emit the weight to the room
     socket.on('weight', (data) => {
-      socket.to(data.roomId).emit('weightUpdate', data.weight)
+      socket.to(data.roomId).emit('weightUpdate', data)
     })
 
     // when user sends tare request, emit to the scale
