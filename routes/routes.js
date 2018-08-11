@@ -1,5 +1,6 @@
 module.exports = (app, passport, User) => {
 
+  // Authentication middleware
   function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
       return next()
@@ -13,11 +14,11 @@ module.exports = (app, passport, User) => {
   })
 
   app.post('/login', passport.authenticate('local-login', {}), (req, res) => {
-  res.json({ success: 'yes', userEmail: req.user.email, userKegs: req.user.kegs })
+  res.json({ success: 'yes' })
 })
 
+  // Register a new kegmo
   app.patch('/register', isLoggedIn, (req, res) => {
-    console.log(req.body)
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -26,6 +27,8 @@ module.exports = (app, passport, User) => {
         user.kegs.push({ name: req.body.name, id: req.body.id })
         user.save()
         res.json({ message: 'Scale registered' })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
       }
     })
   })
@@ -35,6 +38,7 @@ module.exports = (app, passport, User) => {
     res.json({ success: 'yes' })
   })
 
+  // Retrieve all registered kegmos
   app.get('/get-kegs', isLoggedIn, (req, res) => {
     let query = { email: req.query.email }
     User.findOne(query, (err, user) => {
@@ -42,10 +46,13 @@ module.exports = (app, passport, User) => {
         res.json({ message: 'Error' })
       } else if (user) {
         res.json({ userKegs: user.kegs })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
       }
     })
   })
 
+  // Change beer color
   app.patch('/change-color', isLoggedIn, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
@@ -55,10 +62,13 @@ module.exports = (app, passport, User) => {
         user.kegs[req.body.keg].color = req.body.color
         user.save()
         res.json({ message: 'Color changed' })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
       }
     })
   })
 
+  // Change kegmo name
   app.patch('/change-name', isLoggedIn, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
@@ -68,6 +78,8 @@ module.exports = (app, passport, User) => {
         user.kegs[req.body.keg].name = req.body.name
         user.save()
         res.json({ message: 'Name changed' })
+      } else if (!user) {
+        res.json({ message: 'User not found' })
       }
     })
   })

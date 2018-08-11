@@ -17,7 +17,6 @@ module.exports = (passport, User) => {
     passwordField: 'password',
     passReqToCallback: true
   }, (req, email, password, done) => {
-    console.log(req.body)
     process.nextTick(() => {
       User.findOne({
         'email': email
@@ -56,7 +55,7 @@ module.exports = (passport, User) => {
       } else if (!user) {
         console.log('No user was found.')
         return done(null, false)
-      } else if (!user.validPassword(password)) { 
+      } else if (!user.validPassword(password)) {
         console.log('The password is wrong.')
         return done(null, false)
       } else {
