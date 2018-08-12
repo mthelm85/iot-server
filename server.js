@@ -42,7 +42,10 @@ require('./socket.js')(io)
 app.use(morgan('dev'))
 app.use(cookieParser())
 app.use(cors({
-  origin:['http://localhost:8080'],
+  origin:[
+    'http://localhost:8080',
+    'https://keg-level.herokuapp.com'
+  ],
   methods:['GET','POST', 'PATCH'],
   credentials: true
 }))
