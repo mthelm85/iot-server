@@ -11,7 +11,7 @@ const bodyParser = require('body-parser'),
       server = http.createServer(app),
       port = process.env.PORT || 3000,
       User = require('./config/model-user')
-      firebaseConfig = require('./config/firebase')
+      // firebaseConfig = require('./config/firebase')
       io = require('socket.io')(server)
 
 // Connect to MongoDB
