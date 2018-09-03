@@ -1,46 +1,27 @@
 const bodyParser = require('body-parser'),
-      cookieParser = require('cookie-parser'),
       cors = require('cors'),
       express = require('express'),
+      firebase = require('firebase')
       http = require('http'),
       mongoose = require('mongoose'),
-      morgan = require('morgan'),
-      passport = require('passport'),
-      session = require('express-session')
-
-const app = express(),
+      morgan = require('morgan')
+      app = express(),
       configDB = require('./config/dbUrl'),
-      MongoDBStore = require('connect-mongodb-session')(session),
       socketIO = require('socket.io'),
-      secret = require('./config/secret'),
       server = http.createServer(app),
       port = process.env.PORT || 3000,
       User = require('./config/model-user')
+      firebaseConfig = require('./config/firebase')
+      io = require('socket.io')(server)
 
-const io = require('socket.io')(server)
-
-// Connect to/configure MongoDB
+// Connect to MongoDB
 mongoose.connect(configDB.url, { useNewUrlParser: true })
-const store = new MongoDBStore({
-  uri: configDB.url,
-  collection: 'sessions'
-})
 
-store.on('connected', () => {
-  store.client
-})
-
-store.on('error', (err) => {
-  assert.ifError(err)
-  assert.ok(false)
-})
-
-// Include socket //
+// Include socket
 require('./socket.js')(io)
 
-// Server Config//
+// Server Config
 app.use(morgan('dev'))
-app.use(cookieParser())
 app.use(cors({
   origin:[
     'http://localhost:8080',
@@ -53,22 +34,27 @@ app.use(bodyParser.urlencoded({
   extended: true
 }))
 app.use(bodyParser.json())
-app.use(session({
-  // secret: secret.secret,
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: store
-}))
-app.use(passport.initialize())
-app.use(passport.session())
 
-// Include passport
-require('./config/passport')(passport, User)
+// Firebase Config
+const config = {
+  // apiKey: firebaseConfig.apiKey,
+  // authDomain: firebaseConfig.authDomain,
+  // databaseURL: firebaseConfig.databaseURL,
+  // projectId: firebaseConfig.projectId,
+  // storageBucket: firebaseConfig.storageBucket,
+  // messagingSenderId: firebaseConfig.messagingSenderId
+  apiKey: process.env.firebaseApiKey,
+  authDomain: process.env.firebaseAuthDomain,
+  databaseURL: process.env.firebaseDatabaseURL,
+  projectId: process.env.firebaseProjectId,
+  storageBucket: process.env.firebaseStorageBucket,
+  messagingSenderId: process.env.firebaseMessagingSenderId
+}
+
+firebase.initializeApp(config)
 
 // Include routes
-require('./routes/routes.js')(app, passport, User)
-
+require('./routes/routes.js')(app, firebase, User)
 
 server.listen(port)
 console.log(`The magic happens on port ${port}`)

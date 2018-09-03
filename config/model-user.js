@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt-nodejs')
 const validator = require('validator')
 
 const userSchema = mongoose.Schema({
@@ -14,11 +13,6 @@ const userSchema = mongoose.Schema({
       validator: validator.isEmail,
       message: '{VALUE} is not a valid e-mail'
     }
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6
   },
   kegs: [{
     name: {
@@ -41,13 +35,5 @@ const userSchema = mongoose.Schema({
     }
   }]
 })
-
-userSchema.methods.generateHash = (password) => {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
-}
-
-userSchema.methods.validPassword = function (password) {
-  return bcrypt.compareSync(password, this.password)
-}
 
 module.exports = mongoose.model('User', userSchema)

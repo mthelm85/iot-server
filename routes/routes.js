@@ -1,24 +1,41 @@
-module.exports = (app, passport, User) => {
+module.exports = (app, firebase, User) => {
 
   // Authentication middleware
-  function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
+  const isAuthed = (req, res, next) => {
+    let user = firebase.auth().currentUser
+    if (user) {
       return next()
     } else {
-      res.send({ authorized: 'no' })
+      res.json({ Result: 'Not authorized' })
     }
   }
 
-  app.post('/signup', passport.authenticate('local-signup', {}), (req, res) => {
-    res.json({ success: 'yes' })
+  app.post('/signup', (req, res) => {
+    firebase.auth().createUserWithEmailAndPassword(req.body.email, req.body.password)
+    .then(() => {
+      res.json({ Result: 'User created successfully' })
+      let newUser = new User()
+      newUser.email = req.body.email
+      newUser.save()
+    })
+    .catch((error) => {
+      console.log(error)
+      res.json({ Result: `${error.message}` })
+    })
   })
 
-  app.post('/login', passport.authenticate('local-login', {}), (req, res) => {
-  res.json({ success: 'yes' })
-})
+  app.post('/login', (req, res) => {
+    firebase.auth().signInWithEmailAndPassword(req.body.email, req.body.password)
+    .then(() => {
+      res.json({ Result: 'Successful login' })
+    })
+    .catch((error) => {
+      res.json({ Result: `${error.message}` })
+    })
+  })
 
   // Register a new kegmo
-  app.patch('/register', isLoggedIn, (req, res) => {
+  app.patch('/register', isAuthed, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -33,13 +50,18 @@ module.exports = (app, passport, User) => {
     })
   })
 
-  app.get('/logout', isLoggedIn, (req, res) => {
-    req.logout()
-    res.json({ success: 'yes' })
+  app.get('/logout', (req, res) => {
+    firebase.auth().signOut()
+    .then(() => {
+      res.json({ Result: 'Successful logout' })
+    })
+    .catch((error) => {
+      res.json({ Result: `${error.message}` })
+    })
   })
 
   // Retrieve all registered kegmos
-  app.get('/get-kegs', isLoggedIn, (req, res) => {
+  app.get('/get-kegs', isAuthed, (req, res) => {
     let query = { email: req.query.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -53,7 +75,7 @@ module.exports = (app, passport, User) => {
   })
 
   // Change beer color
-  app.patch('/change-color', isLoggedIn, (req, res) => {
+  app.patch('/change-color', isAuthed, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -69,7 +91,7 @@ module.exports = (app, passport, User) => {
   })
 
   // Change kegmo name
-  app.patch('/change-name', isLoggedIn, (req, res) => {
+  app.patch('/change-name', isAuthed, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -85,7 +107,7 @@ module.exports = (app, passport, User) => {
   })
 
   // Set tareWeight
-  app.patch('/set-tare-weight', isLoggedIn, (req, res) => {
+  app.patch('/set-tare-weight', isAuthed, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
@@ -101,7 +123,7 @@ module.exports = (app, passport, User) => {
   })
 
   // Set fullWeight
-  app.patch('/set-full-weight', isLoggedIn, (req, res) => {
+  app.patch('/set-full-weight', isAuthed, (req, res) => {
     let query = { email: req.body.email }
     User.findOne(query, (err, user) => {
       if (err) {
