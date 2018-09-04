@@ -1,5 +1,7 @@
 module.exports = (app, firebase, User) => {
 
+  const emailQuery = { email: req.body.email }
+
   // Authentication middleware
   const isAuthed = (req, res, next) => {
     let user = firebase.auth().currentUser
@@ -19,7 +21,6 @@ module.exports = (app, firebase, User) => {
       newUser.save()
     })
     .catch((error) => {
-      console.log(error)
       res.json({ Result: `${error.message}` })
     })
   })
@@ -36,8 +37,7 @@ module.exports = (app, firebase, User) => {
 
   // Register a new kegmo
   app.patch('/register', isAuthed, (req, res) => {
-    let query = { email: req.body.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
@@ -62,8 +62,7 @@ module.exports = (app, firebase, User) => {
 
   // Retrieve all registered kegmos
   app.get('/get-kegs', isAuthed, (req, res) => {
-    let query = { email: req.query.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
@@ -76,8 +75,7 @@ module.exports = (app, firebase, User) => {
 
   // Change beer color
   app.patch('/change-color', isAuthed, (req, res) => {
-    let query = { email: req.body.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
@@ -92,8 +90,7 @@ module.exports = (app, firebase, User) => {
 
   // Change kegmo name
   app.patch('/change-name', isAuthed, (req, res) => {
-    let query = { email: req.body.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
@@ -108,8 +105,7 @@ module.exports = (app, firebase, User) => {
 
   // Set tareWeight
   app.patch('/set-tare-weight', isAuthed, (req, res) => {
-    let query = { email: req.body.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
@@ -124,8 +120,7 @@ module.exports = (app, firebase, User) => {
 
   // Set fullWeight
   app.patch('/set-full-weight', isAuthed, (req, res) => {
-    let query = { email: req.body.email }
-    User.findOne(query, (err, user) => {
+    User.findOne(emailQuery, (err, user) => {
       if (err) {
         res.json({ message: 'Error' })
       } else if (user) {
